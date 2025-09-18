@@ -1,0 +1,15 @@
+# test-config.yml
+services:
+  worker_a:
+    build: .
+    environment:
+      - BROKER_URL=amqp://guest:guest@host.docker.internal:5672//
+      - RESULT_BACKEND=rpc://
+    command: ["celery","-A","celery_app","worker","-l","info","-Q","queue_a","-n","worker_a@%h"]
+
+  worker_b:
+    build: .
+    environment:
+      - BROKER_URL=amqp://guest:guest@host.docker.internal:5672//
+      - RESULT_BACKEND=rpc://
+    command: ["celery","-A","celery_app","worker","-l","info","-Q","queue_b","-n","worker_b@%h"]
