@@ -3,7 +3,7 @@
 A distributed automated test system built with RabbitMQ, Celery, and Docker that demonstrates task routing, worker isolation, and concurrent execution.
 
 ## 🎯 **What this does**
-
+????????????????????????????????????????????????
 ---
 
 ## 🏗️ Architecture
@@ -137,6 +137,21 @@ Expected output:
 python dispatch.py
 ```
 
+## Makefile Commands
+
+```bash
+make help       # Show usage
+make install    # Install dependencies
+make build      # Build containers
+make up         # Start containers
+make down       # Stop containers
+make run        # Run dispatcher
+make test       # Full test sequence
+make logs       # Show logs
+make ps         # Container status
+make clean      # Clean up
+```
+
 ## 📱 Expected Output
 
 When you run `python dispatch.py`, you should see output similar to:
@@ -145,4 +160,25 @@ When you run `python dispatch.py`, you should see output similar to:
 Dispatching tasks...
 Result from task_a: Hello from Task A
 Result from task_b: Hello from Task B
+```
+
+## Architecture
+
+- **task_a**: Processed only by worker-a (queue_a)
+- **task_b**: Processed only by worker-b (queue_b)
+- **RabbitMQ**: Message broker running on host
+- **Docker**: Two isolated worker containers
+
+## Files
+
+- `celery_app.py`: Celery configuration and tasks
+- `dispatch.py`: Simple dispatcher script
+- `Dockerfile`: Worker container definition
+- `docker-compose.yml`: Container orchestration
+- `requirements.txt`: Python dependencies
+
+## Cleanup
+
+```bash
+docker-compose down
 ```
