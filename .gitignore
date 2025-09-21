@@ -20,7 +20,7 @@ wheels/
 .installed.cfg
 *.egg
 Tests.rtf
-Presentation Ororatech.pptx
+Presentation_Ororatech.pptx
 
 # Virtual environments
 venv/
