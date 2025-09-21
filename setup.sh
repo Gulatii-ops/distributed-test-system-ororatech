@@ -106,12 +106,12 @@ run_tasks_and_save() {
     python3 dispatch.py
     
     # Check if log file was created
-    if ls logs/log_*.json 1> /dev/null 2>&1; then
-        latest_log=$(ls -t logs/log_*.json | head -n1)
-        print_success "Results saved to: $latest_log"
-    else
-        print_warning "No JSON log file found"
-    fi
+    #if ls logs/log_*.json 1> /dev/null 2>&1; then
+    #    latest_log=$(ls -t logs/log_*.json | head -n1)
+    #    print_success "Results saved to: $latest_log"
+    #else
+    #    print_warning "No JSON log file found"
+    #fi
 }
 
 # Main execution

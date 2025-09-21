@@ -495,7 +495,7 @@ def main():
 
     # Log summary and total time
 
-    #log_json("summary", total_tasks=total, success_rate=f"{success_rate}%")
+    log_json("summary", total_tasks=total, success_rate=f"{success_rate}%", total_time_s=total_time)
 
     #log_json("end", message="All tasks completed", total_time_s=total_time)
 
