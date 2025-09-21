@@ -1,0 +1,5 @@
+{"event": "start", "details": {"message": "Dispatching tasks"}}
+{"event": "task_completed", "details": {"task": "task_a", "status": "success", "result": "Hello from Task A", "execution_time_s": 0.514}}
+{"event": "task_completed", "details": {"task": "task_b", "status": "success", "result": "Hello from Task B", "execution_time_s": 0.514}}
+{"event": "summary", "details": {"total_tasks": 2, "success_rate": "100.0%"}}
+{"event": "end", "details": {"message": "All tasks completed", "total_time_s": 1.061}}

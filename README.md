@@ -41,6 +41,7 @@ A distributed automated test system built with RabbitMQ, Celery, and Docker that
 - 💾 **Result Persistence**: JSON output for further analysis
 - 🐳 **Docker Orchestration**: Complete containerized deployment
 - 🔍 **Health Monitoring**: Broker connection and worker status checks
+- ⚙️ **Setup Automation**: Interactive setup script
 
 ## 📋 Prerequisites
 
@@ -77,8 +78,14 @@ sudo systemctl enable rabbitmq-server
 ```bash
 # Check if RabbitMQ is running
 sudo rabbitmqctl status
+```
 
-# Access management UI [http://localhost:15672 (guest/guest)]
+#### Start RabbitMQ as a service
+```bash
+brew services start rabbitmq
+```
+
+#### Access management UI [http://localhost:15672 (guest/guest)]
 rabbitmq-plugins enable rabbitmq_management
 ```
 
@@ -88,6 +95,7 @@ rabbitmq-plugins enable rabbitmq_management
 # Clone the repository (or download the files)
 git clone <repository-url>
 ````
+> Make sure Docker Desktop is running in the background!
 ## Quick Start with Makefile
 
 The easiest way to run the system:
