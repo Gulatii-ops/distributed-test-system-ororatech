@@ -3,7 +3,7 @@ Simple dispatcher script that
     - Sends tasks concurrently to two queues (via task routing in celery_app.py).
     - Structured JSON logging for transparency (console + timestamped file in /logs).
     - A simple progress visualization using tqdm to show task completion.
-    - End-of-run ASCII table summarizing results and per-task durations.
+    - End-of-run ASCII table summarizing results and per-task durations with colors.
 """
 
 import json
@@ -12,6 +12,10 @@ import time
 from tqdm import tqdm
 from pathlib import Path
 from celery_app import task_a, task_b
+from colorama import init, Fore, Style, Back
+
+# Initialize colorama for cross-platform color support
+init(autoreset=True)
 
 # --- Prepare log folder and file ---
 log_dir = Path(__file__).parent / "logs"
@@ -38,37 +42,90 @@ def log_json(event: str, **kwargs):
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(line + "\n")
 
+def get_status_color(status: str) -> str:
+    """
+    Returns appropriate color codes for different task statuses.
+    """
+    color_map = {
+        "success": Fore.GREEN,
+        "failure": Fore.RED,
+        "unknown": Fore.YELLOW,
+        "pending": Fore.BLUE,
+        "running": Fore.CYAN
+    }
+    return color_map.get(status.lower(), Fore.WHITE)
+
+def get_duration_color(duration: float) -> str:
+    """
+    Returns color based on task duration (green for fast, yellow for medium, red for slow).
+    """
+    if duration < 1.0:
+        return Fore.GREEN
+    elif duration < 5.0:
+        return Fore.YELLOW
+    else:
+        return Fore.RED
+
 def print_summary_table(results: dict, task_times: dict, statuses: dict):
     """
-    Prints an ASCII table with task name, status, duration, and result.
+    Prints a colorized ASCII table with task name, status, duration, and result.
     """
+    if not results:
+        print(f"{Fore.YELLOW}No results to display{Style.RESET_ALL}")
+        return
+    
     # Column widths
-    name_w = max(len("task"), *(len(k) for k in results)) + 2 if results else 8
+    name_w = max(len("task"), *(len(k) for k in results)) + 2
     status_w = max(len("status"), 6) + 2
     time_w = max(len("time_s"), 6) + 2
     result_w = 60  # cap result text width
 
-    def row(task, status, duration, result):
+    def colored_row(task, status, duration, result):
+        """Create a colored row for the table."""
         result_str = str(result)
         if len(result_str) > result_w:
             result_str = result_str[:result_w - 3] + "..."
-        return f"{task:<{name_w}}{status:<{status_w}}{duration:<{time_w}}{result_str}"
+        
+        # Apply colors
+        status_color = get_status_color(status)
+        duration_color = get_duration_color(duration)
+        
+        # Color the result based on status
+        if status.lower() == "success":
+            result_color = Fore.GREEN
+        elif status.lower() == "failure":
+            result_color = Fore.RED
+        else:
+            result_color = Fore.WHITE
+        
+        return (f"{Fore.CYAN}{task:<{name_w}}{Style.RESET_ALL}"
+                f"{status_color}{status:<{status_w}}{Style.RESET_ALL}"
+                f"{duration_color}{duration:<{time_w}}{Style.RESET_ALL}"
+                f"{result_color}{result_str}{Style.RESET_ALL}")
 
-    header = f"{'task':<{name_w}}{'status':<{status_w}}{'time_s':<{time_w}}result"
-    separator = "-" * (name_w + status_w + time_w + result_w)
+    # Header with styling
+    header = (f"{Style.BRIGHT}{Fore.WHITE}{'task':<{name_w}}"
+              f"{'status':<{status_w}}{'time_s':<{time_w}}result{Style.RESET_ALL}")
+    
+    separator = f"{Fore.MAGENTA}{'-' * (name_w + status_w + time_w + result_w)}{Style.RESET_ALL}"
 
-    print("\n" + header)
+    print(f"\n{header}")
     print(separator)
-    for t in results:
-        s = statuses.get(t, "unknown")
-        d = f"{task_times.get(t, 0.0):.3f}"
-        print(row(t, s, d, results[t]))
+    
+    for task_name in results:
+        status = statuses.get(task_name, "unknown")
+        duration_val = task_times.get(task_name, 0.0)
+        duration_str = f"{duration_val:.3f}"
+        print(colored_row(task_name, status, duration_val, results[task_name]))
+    
+    # Add a bottom border
+    print(separator)
 
 def main():
     overall_start = time.time()
     print()
     log_json("start", message="Dispatching tasks")
-    print("\n")
+    print(f"\n{Fore.CYAN}{Style.BRIGHT}🚀 Starting task dispatch...{Style.RESET_ALL}\n")
 
     # Dispatch tasks and record start times
     start_times = {}
@@ -86,7 +143,8 @@ def main():
     statuses = {}     # per-task status
 
     # Progress bar visualization
-    with tqdm(total=total, desc="Processing", ncols=80) as pbar:
+    with tqdm(total=total, desc="Processing", ncols=80, 
+              bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]') as pbar:
         completed = 0
         while completed < total:
             for name, result in list(tasks.items()):
@@ -116,10 +174,6 @@ def main():
                         execution_time_s=duration
                     )
 
-                    # Keep progress bar tidy
-                    #tqdm.write(f"{name} ({status}) → {output} [Time: {duration}s]")
-                    #print("\n")
-
                     del tasks[name]
                     completed += 1
                     pbar.update(1)
@@ -128,25 +182,34 @@ def main():
 
     overall_end = time.time()
 
-    # Print outputs in the original style
-    #print(f"\nResult from task_a: {results.get('task_a')}")
-    #print(f"Result from task_b: {results.get('task_b')}")
-
-
-    # ASCII table summary
+    # ASCII table summary with colors
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}📊 EXECUTION SUMMARY{Style.RESET_ALL}")
     print_summary_table(results, task_times, statuses)
     print("\n")
 
     # Calculate summary metrics
     success_rate = round((success_count / total) * 100, 2)
+    total_time = round(overall_end - overall_start, 3)
+
+    # Colored summary stats
+    if success_rate == 100:
+        success_color = Fore.GREEN
+        success_icon = "✅"
+    elif success_rate >= 50:
+        success_color = Fore.YELLOW
+        success_icon = "⚠️"
+    else:
+        success_color = Fore.RED
+        success_icon = "❌"
+
+    print(f"{success_icon} {success_color}Success Rate: {success_rate}%{Style.RESET_ALL}")
+    print(f"⏱️  {Fore.BLUE}Total Execution Time: {total_time}s{Style.RESET_ALL}")
 
     # Log summary and total time
-    total_time = round(overall_end - overall_start, 3)
-    log_json("summary", total_tasks=total, success_rate=f"{success_rate}%")
-    log_json("end", message="All tasks completed", total_time_s=total_time)
+    #log_json("summary", total_tasks=total, success_rate=f"{success_rate}%")
+    #log_json("end", message="All tasks completed", total_time_s=total_time)
 
-
-    print(f"\nLogs saved to: {log_file}\n")
+    print(f"\n💾 {Fore.MAGENTA}Logs saved to: {log_file}{Style.RESET_ALL}\n")
 
 if __name__ == "__main__":
     main()

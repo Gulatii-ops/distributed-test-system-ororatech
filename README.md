@@ -2,8 +2,8 @@
 
 A distributed automated test system built with RabbitMQ, Celery, and Docker that demonstrates task routing, worker isolation, and concurrent execution.
 
-## 🎯 **What this does**
-????????????????????????????????????????????????
+> 📋 **Original Challenge Requirements**: See [TestEngineer_TechChallenge.pdf](./TestEngineer_TechChallenge.pdf) for the complete challenge specification.
+
 ---
 
 ## 🏗️ Architecture
@@ -22,6 +22,10 @@ A distributed automated test system built with RabbitMQ, Celery, and Docker that
                        │  └──────────────┘    │  └─────────────┘│
                        └─────────────────┘    └─────────────────┘
 ```
+- **task_a**: Processed only by worker-a (queue_a)
+- **task_b**: Processed only by worker-b (queue_b)
+- **RabbitMQ**: Message broker running on host
+- **Docker**: Two isolated worker containers
 
 ## 🚀 Features
 
@@ -31,17 +35,16 @@ A distributed automated test system built with RabbitMQ, Celery, and Docker that
 - ✅ **Container Isolation**: Each worker processes only designated tasks
 - ✅ **Concurrent Execution**: Parallel task dispatching and result collection
 
-???????????????????????????????????????????
-
-### Enhanced Features (Stretch Goals)
+### Enhanced Features
 - 🎨 **Rich Visualization**: Colored output with real-time status updates
 - 📊 **Performance Metrics**: Execution timing and statistics
 - 📝 **Structured Logging**: JSON-formatted logs with metadata
-- 🔄 **Retry Mechanism**: Automatic retries with exponential backoff
-- 💾 **Result Persistence**: JSON output for further analysis
-- 🐳 **Docker Orchestration**: Complete containerized deployment
-- 🔍 **Health Monitoring**: Broker connection and worker status checks
 - ⚙️ **Setup Automation**: Interactive setup script
+    - Checks system requirements (Docker, Rabbitmq, Python3+)
+    - Start Rabbitmq
+    - Install python dependencies
+    - Execute task and save logs
+    - Shut down containers
 
 ## 📋 Prerequisites
 
@@ -57,36 +60,12 @@ A distributed automated test system built with RabbitMQ, Celery, and Docker that
 ```bash
 # Install RabbitMQ
 brew install rabbitmq
-
-# Start RabbitMQ server
-brew services start rabbitmq
-
-```
-
-#### Linux
-```bash
-# Install RabbitMQ
-sudo apt-get update
-sudo apt-get install rabbitmq-server
-
-# Start RabbitMQ service
-sudo systemctl start rabbitmq-server
-sudo systemctl enable rabbitmq-server
 ```
 
 #### Verify RabbitMQ Installation
 ```bash
 # Check if RabbitMQ is running
 sudo rabbitmqctl status
-```
-
-#### Start RabbitMQ as a service
-```bash
-brew services start rabbitmq
-```
-
-#### Access management UI [http://localhost:15672 (guest/guest)]
-rabbitmq-plugins enable rabbitmq_management
 ```
 
 ### 2. Clone and Setup Project
@@ -96,9 +75,26 @@ rabbitmq-plugins enable rabbitmq_management
 git clone <repository-url>
 ````
 > Make sure Docker Desktop is running in the background!
-## Quick Start with Makefile
+
+## Approach 1: Quick Start with setup.sh (no need to start rabbitmq manually)
 
 The easiest way to run the system:
+
+```bash
+./setup.sh   # Complete automated test
+```
+
+## Approach 2: Using Makefile
+
+#### Start RabbitMQ as a service
+```bash
+brew services start rabbitmq
+```
+
+#### Access management UI [http://localhost:15672 (guest/guest)]
+```bash
+rabbitmq-plugins enable rabbitmq_management
+```
 
 ```bash
 make test    # Complete automated test
@@ -110,14 +106,40 @@ make up         # Start containers
 make run        # Run dispatcher
 make down       # Stop containers
 ```
-## Manual Setup
 
-### 1. Install Python dependencies
+## Makefile Commands
+
+```bash
+make help       # Show usage
+make install    # Install dependencies
+make build      # Build containers
+make up         # Start containers
+make down       # Stop containers
+make run        # Run dispatcher
+make test       # Full test sequence
+make logs       # Show logs
+make ps         # Container status
+make clean      # Clean up
+```
+
+## Approach 3: Manual Setup
+
+#### Start RabbitMQ as a service
+```bash
+brew services start rabbitmq
+```
+
+#### Access management UI [http://localhost:15672 (guest/guest)]
+```bash
+rabbitmq-plugins enable rabbitmq_management
+```
+
+#### 1. Install Python dependencies
 ```
 pip install -r requirements.txt
 ```
 
-### 2. Build and Run Worker Containers
+#### 2. Build and Run Worker Containers
 
 ```bash
 # Build the Docker image
@@ -145,37 +167,24 @@ Expected output:
 python dispatch.py
 ```
 
-## Makefile Commands
+## 📱 Expected Output example
 
-```bash
-make help       # Show usage
-make install    # Install dependencies
-make build      # Build containers
-make up         # Start containers
-make down       # Stop containers
-make run        # Run dispatcher
-make test       # Full test sequence
-make logs       # Show logs
-make ps         # Container status
-make clean      # Clean up
-```
+![Output Example](./output_example.png)
 
-## 📱 Expected Output
+## How to Visualize Results
 
-When you run `python dispatch.py`, you should see output similar to:
+The dispatcher provides multiple ways to monitor and visualize task execution:
 
-```
-Dispatching tasks...
-Result from task_a: Hello from Task A
-Result from task_b: Hello from Task B
-```
-
-## Architecture
-
-- **task_a**: Processed only by worker-a (queue_a)
-- **task_b**: Processed only by worker-b (queue_b)
-- **RabbitMQ**: Message broker running on host
-- **Docker**: Two isolated worker containers
+### Real-time Console Output
+During execution, you'll see:
+- **Progress bar** showing task completion status
+- **Colored ASCII table** summarizing results with status-based colors:
+  - **Green**: Successful tasks
+  - **Red**: Failed tasks  
+  - **Yellow**: Unknown/pending status
+- **Live metrics** including success rate and individual and total execution times
+- **Structured JSON Logs**
+    - All execution data is automatically saved to timestamped JSON files in /logs/
 
 ## Files
 

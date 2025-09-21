@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Distributed Test System Setup Script
 # This script automates the complete setup and execution of the distributed test system
 
@@ -48,28 +46,14 @@ check_rabbitmq() {
 start_rabbitmq() {
     print_status "Starting RabbitMQ..."
     
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        if command_exists brew; then
-            if ! check_rabbitmq; then
-                brew services start rabbitmq
-                sleep 5
-            fi
-        else
-            print_error "Homebrew not found. Please install RabbitMQ manually."
-            exit 1
-        fi
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # Linux
-        if command_exists systemctl; then
-            sudo systemctl start rabbitmq-server
+    # macOS
+    if command_exists brew; then
+        if ! check_rabbitmq; then
+            brew services start rabbitmq
             sleep 5
-        else
-            print_error "systemctl not found. Please start RabbitMQ manually."
-            exit 1
         fi
     else
-        print_error "Unsupported OS. Please start RabbitMQ manually."
+        print_error "Homebrew not found. Please install RabbitMQ manually."
         exit 1
     fi
     
@@ -125,10 +109,6 @@ run_tasks_and_save() {
     if ls logs/log_*.json 1> /dev/null 2>&1; then
         latest_log=$(ls -t logs/log_*.json | head -n1)
         print_success "Tasks completed. Results saved to: $latest_log"
-        
-#        # Display the JSON content
-#        print_status "JSON Results:"
-#        cat "$latest_log"
     else
         print_warning "No JSON log file found"
     fi
