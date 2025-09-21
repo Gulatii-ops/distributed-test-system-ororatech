@@ -169,10 +169,16 @@ The dispatcher provides multiple ways to monitor and visualize task execution:
 #### Real-time Console Output
 During execution, you'll see:
 - **Progress bar** showing task completion status
-- **Colored ASCII table** summarizing results with status-based colors:
-  - **Green**: Successful tasks
-  - **Red**: Failed tasks  
-  - **Yellow**: Unknown/pending status
+- **Colored ASCII table** summarizing results with 
+    - **Status-based colors:**
+        - **Green**: Successful tasks
+        - **Red**: Failed tasks  
+        - **Magenta**: Timeout status specifically
+        - **Yellow**: Unknown/pending status
+    - **Time-based colors:**
+        - **Green**: Execution time <1s
+        - **Yellow**: Execution time <5s
+        - **Red**: Otherwise 
 - **Live metrics** including success rate and individual and total execution times
 - **Structured JSON Logs**
     - All execution data is automatically saved to timestamped JSON files in `/logs/`

@@ -108,7 +108,7 @@ run_tasks_and_save() {
     # Check if log file was created
     if ls logs/log_*.json 1> /dev/null 2>&1; then
         latest_log=$(ls -t logs/log_*.json | head -n1)
-        print_success "Tasks completed. Results saved to: $latest_log"
+        print_success "Results saved to: $latest_log"
     else
         print_warning "No JSON log file found"
     fi
@@ -183,8 +183,6 @@ main() {
     print_status "Step 5: Running tasks A and B..."
     run_tasks_and_save
     
-    print_success "Setup completed successfully!"
-    
     # Step 6: Stop containers
     print_status "Step 6: Stopping containers..."
     docker-compose down
@@ -192,9 +190,6 @@ main() {
     print_status "You can now:"
     print_status "  - View logs: docker-compose logs"
     print_status "  - Start containers: docker-compose up -d"
-
-
-
 }
 
 # Run main function
