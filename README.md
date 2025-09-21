@@ -48,7 +48,7 @@ A distributed automated test system built with RabbitMQ, Celery, and Docker that
 
 ## 📋 Prerequisites
 
-- **Docker & Docker Compose**: For container orchestration (from: `https://www.docker.com/get-started/`)
+- **Docker & Docker Compose**: For container orchestration ([Click here to install](https://www.docker.com/get-started/))
 - **RabbitMQ**: Message broker (running locally, not in container)
 - **Python 3.8+**: For local development and testing
 
