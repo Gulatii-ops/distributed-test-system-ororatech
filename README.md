@@ -62,17 +62,12 @@ A distributed automated test system built with RabbitMQ, Celery, and Docker that
 brew install rabbitmq
 ```
 
-#### Verify RabbitMQ Installation
-```bash
-# Check if RabbitMQ is running
-sudo rabbitmqctl status
-```
-
 ### 2. Clone and Setup Project
 
 ```bash
 # Clone the repository (or download the files)
 git clone <repository-url>
+cd distributed-test-system-ororatech
 ````
 > Make sure Docker Desktop is running in the background!
 
@@ -89,6 +84,11 @@ The easiest way to run the system:
 #### 1. Start RabbitMQ as a service
 ```bash
 brew services start rabbitmq
+
+# Check if RabbitMQ is running
+sudo rabbitmqctl status
+#or
+brew services list | grep rabbitmq
 ```
 
 #### 2. Run Complete Automated Test
@@ -123,6 +123,11 @@ make clean      # Clean up
 #### 1. Start RabbitMQ as a service
 ```bash
 brew services start rabbitmq
+
+# Check if RabbitMQ is running
+sudo rabbitmqctl status
+#or
+brew services list | grep rabbitmq
 ```
 
 #### 2. Install Python dependencies
