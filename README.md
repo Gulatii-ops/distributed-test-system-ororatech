@@ -86,18 +86,14 @@ The easiest way to run the system:
 
 ## Approach 2: Using Makefile
 
-#### Start RabbitMQ as a service
+#### 1. Start RabbitMQ as a service
 ```bash
 brew services start rabbitmq
 ```
 
-#### Access management UI [http://localhost:15672 (guest/guest)]
+#### 2. Run Complete Automated Test
 ```bash
-rabbitmq-plugins enable rabbitmq_management
-```
-
-```bash
-make test    # Complete automated test
+make test
 ```
 
 Or step by step:
@@ -107,7 +103,7 @@ make run        # Run dispatcher
 make down       # Stop containers
 ```
 
-## Makefile Commands
+#### Makefile Commands
 
 ```bash
 make help       # Show usage
@@ -124,22 +120,17 @@ make clean      # Clean up
 
 ## Approach 3: Manual Setup
 
-#### Start RabbitMQ as a service
+#### 1. Start RabbitMQ as a service
 ```bash
 brew services start rabbitmq
 ```
 
-#### Access management UI [http://localhost:15672 (guest/guest)]
-```bash
-rabbitmq-plugins enable rabbitmq_management
-```
-
-#### 1. Install Python dependencies
+#### 2. Install Python dependencies
 ```
 pip install -r requirements.txt
 ```
 
-#### 2. Build and Run Worker Containers
+#### 3. Build and Run Worker Containers
 
 ```bash
 # Build the Docker image
@@ -160,7 +151,7 @@ Expected output:
 %-worker-b   celery -A celery_app worke ...   Up ...
 ```
 
-### 3. Run the Dispatcher
+### 4. Run the Dispatcher
 
 ```bash
 # Execute the dispatcher script
@@ -175,7 +166,7 @@ python dispatch.py
 
 The dispatcher provides multiple ways to monitor and visualize task execution:
 
-### Real-time Console Output
+#### Real-time Console Output
 During execution, you'll see:
 - **Progress bar** showing task completion status
 - **Colored ASCII table** summarizing results with status-based colors:
@@ -184,7 +175,7 @@ During execution, you'll see:
   - **Yellow**: Unknown/pending status
 - **Live metrics** including success rate and individual and total execution times
 - **Structured JSON Logs**
-    - All execution data is automatically saved to timestamped JSON files in /logs/
+    - All execution data is automatically saved to timestamped JSON files in `/logs/`
 
 ## Files
 
@@ -198,4 +189,6 @@ During execution, you'll see:
 
 ```bash
 docker-compose down
+#or
+make clean
 ```
