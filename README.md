@@ -45,6 +45,7 @@ A distributed automated test system built with RabbitMQ, Celery, and Docker that
     - Install python dependencies
     - Execute task and save logs
     - Shut down containers
+- 🔄 Automatic retry for known exception
 
 ## 📋 Prerequisites
 
@@ -187,6 +188,9 @@ During execution, you'll see:
 - **Live metrics** including success rate and individual and total execution times
 - **Structured JSON Logs**
     - All execution data is automatically saved to timestamped JSON files in `/logs/`
+
+> [!NOTE]
+> To demonstrate retries, uncomment lines 28-29 and 41-42 in celery_app.py
 
 ## Files
 

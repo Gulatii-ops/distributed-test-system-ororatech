@@ -30,7 +30,7 @@ run:
 test: install build up
 	@sleep 2
 	python dispatch.py
-	@sleep 60
+	@sleep 10
 	$(MAKE) down
 
 logs:

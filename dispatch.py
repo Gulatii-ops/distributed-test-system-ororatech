@@ -148,6 +148,9 @@ def main():
     task_times = {}   # per-task durations
     statuses = {}     # per-task status
 
+    # buffer time for the tasks to be ready
+    # time.sleep(15)
+
     # Progress bar visualization with timeout handling
     TASK_TIMEOUT = 30  # Maximum time to wait for any single task (in seconds)
     CHECK_INTERVAL = 0.5  # How often to check task status (in seconds)
@@ -166,25 +169,31 @@ def main():
                     duration = round(end_time - start_times[name], 3)
                     try:
                         output = result.get(timeout=20)
+                        final_output = output['result']
+                        retry_count = output['retry_count']
                         status = "success"
                         success_count += 1
                     except Exception as e:
                         output = str(e)
                         status = "failure"
 
-                    results[name] = output
+                    results[name] = final_output
                     task_times[name] = duration
                     statuses[name] = status
 
                     # Log JSON for each completed task
                     print("\n")
-                    log_json(
-                        "task_completed",
-                        task=name,
-                        status=status,
-                        result=output,
-                        execution_time_s=duration
-                    )
+                    log_data = {
+                        "task": name,
+                        "status": status,
+                        "result": final_output,
+                        "execution_time_s": duration
+                    }
+
+                    if retry_count and retry_count!=0:
+                        log_data["retry"] = retry_count
+
+                    log_json("task_completed", **log_data)
                     del tasks[name]
                     completed += 1
                     pbar.update(1)
