@@ -37,8 +37,8 @@ def task_a(self):
 def task_b(self):
     retry_count = self.request.retries
     # DEMO RETRY: Uncomment the lines below to demonstrate retry mechanism
-    #if retry_count < 2:
-    #    raise Exception(f"Simulated failure on attempt {retry_count + 1}")
+    if retry_count < 2:
+        raise Exception(f"Simulated failure on attempt {retry_count + 1}")
     
     return {
         "result": "Hello from Task B",
