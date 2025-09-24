@@ -57,9 +57,8 @@ A distributed automated test system built with RabbitMQ, Celery, and Docker that
 
 ### 1. Install and Start RabbitMQ
 
-#### macOS (using Homebrew)
 ```bash
-# Install RabbitMQ
+# macOS
 brew install rabbitmq
 ```
 
@@ -174,7 +173,7 @@ The dispatcher provides multiple ways to monitor and visualize task execution:
 
 #### Real-time Console Output
 During execution, you'll see:
-- **Progress bar** showing task completion status
+- **Progress bar** showing task completion status with tqdm
 - **Colored ASCII table** summarizing results with 
     - **Status-based colors:**
         - **Green**: Successful tasks
@@ -191,6 +190,14 @@ During execution, you'll see:
 
 > [!NOTE]
 > To demonstrate retries, uncomment lines 28-29 and 40-41 in celery_app.py
+
+## Complete Workflow
+1. `dispatch.py` calls `task_a.delay()` or `task_b.delay()`
+2. Celery sends message to RabbitMQ
+3. RabbitMQ routes message to appropriate queue (`queue_a` or `queue_b`)
+4. Available worker consumes message from queue
+5. Worker processes task and stores result
+6. `result.get()` retrieves result from result backend
 
 ## Files
 

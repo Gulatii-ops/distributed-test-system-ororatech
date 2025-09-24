@@ -132,7 +132,6 @@ def main():
     print(f"\n{Fore.CYAN}{Style.BRIGHT}🚀 Starting task dispatch...{Style.RESET_ALL}\n")
 
     # Dispatch tasks and record start times
-
     start_times = {}
     tasks = {
         "task_a": task_a.delay(),
@@ -164,7 +163,7 @@ def main():
             for name, result in list(tasks.items()):
                 task_runtime = current_time - start_times[name]
                 # Check if task has completed
-                if result.ready():
+                if result.ready():  # Non-blocking check
                     end_time = time.time()
                     duration = round(end_time - start_times[name], 3)
                     try:

@@ -27,7 +27,7 @@ down:
 run:
 	python dispatch.py
 
-test: install build up
+test: build up
 	@sleep 2
 	python dispatch.py
 	@sleep 10
