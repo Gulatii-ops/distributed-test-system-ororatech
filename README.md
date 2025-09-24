@@ -190,7 +190,7 @@ During execution, you'll see:
     - All execution data is automatically saved to timestamped JSON files in `/logs/`
 
 > [!NOTE]
-> To demonstrate retries, uncomment lines 28-29 and 41-42 in celery_app.py
+> To demonstrate retries, uncomment lines 28-29 and 40-41 in celery_app.py
 
 ## Files
 
