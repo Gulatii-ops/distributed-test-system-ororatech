@@ -167,6 +167,14 @@ python dispatch.py
 
 ![Output Example](./output_example.png)
 
+## Cleanup
+
+```bash
+docker-compose down
+#or
+make clean
+```
+
 ## How to Visualize Results
 
 The dispatcher provides multiple ways to monitor and visualize task execution:
@@ -206,11 +214,3 @@ During execution, you'll see:
 - `Dockerfile`: Worker container definition
 - `docker-compose.yml`: Container orchestration
 - `requirements.txt`: Python dependencies
-
-## Cleanup
-
-```bash
-docker-compose down
-#or
-make clean
-```
